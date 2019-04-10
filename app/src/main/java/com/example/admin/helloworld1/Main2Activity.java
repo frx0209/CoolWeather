@@ -1,6 +1,5 @@
 package com.example.admin.helloworld1;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
@@ -12,23 +11,16 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
-
+public class Main2Activity extends AppCompatActivity {
     private TextView textView;
-    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        this.textView = (TextView) findViewById(R.id.abc);
-        this.button=(Button)findViewById(R.id.Btn);
-        this.button.setOnClickListener((v)->{
-            startActivity(new Intent(MainActivity.this,Main2Activity.class));
-        });
+        setContentView(R.layout.activity_main2);
+        this.textView = (TextView) findViewById(R.id.acd);
 
-        String weatherId = "CN101040200";
-        String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weatherId + "&key=d8bd0f362c38447799474b5ac38ce2ea";
+        String weatherUrl = "http://guolin.tech/api/china";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
 
 
