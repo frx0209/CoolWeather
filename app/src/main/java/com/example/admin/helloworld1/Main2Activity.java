@@ -41,11 +41,12 @@ public class Main2Activity extends AppCompatActivity {
 
         ArrayAdapter<String> adapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
         listView.setAdapter(adapter);
-        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.v("点击了哪一个",""+position+""+Main2Activity.this.pids[position]);
-            }
+        this.listView.setOnItemClickListener((parent,view,position,id)-> {
+                Log.i("点击了哪一个",""+position+":"+Main2Activity.this.pids[position]+":"+Main2Activity.this.data[position]);
+                Intent intent = new Intent(Main2Activity.this,MainActivity.class);
+                intent.putExtra("pid",Main2Activity.this.pids[position]);
+                startActivity(intent);
+
         });
 
         this.button=(Button)findViewById(R.id.Buttom);
@@ -65,8 +66,8 @@ public class Main2Activity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
 
-                String[] result=parseJSONObject(responseText);
-                Main2Activity.this.data=result;
+               parseJSONObject(responseText);
+
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -82,21 +83,18 @@ public class Main2Activity extends AppCompatActivity {
         });
     }
 
-    private String[] parseJSONObject(String responseText) {
+    private void parseJSONObject(String responseText) {
         JSONArray jsonArray=null;
         try{
             jsonArray = new JSONArray(responseText);
-            String[] result=new String[jsonArray.length()];
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject =null;
                 jsonObject=jsonArray.getJSONObject(i);
                 this.data[i]= jsonObject.getString("name");
                 this.pids[i]=jsonObject.getInt("id");
-        }
-            return result;
+            }
         }catch (JSONException e){
             e.printStackTrace();
         }
-        return null;
     }
 }
