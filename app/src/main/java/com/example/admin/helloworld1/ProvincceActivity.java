@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -23,7 +21,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class Main2Activity extends AppCompatActivity {
+public class ProvincceActivity extends AppCompatActivity {
 
     private List<String> data2=new ArrayList();
     private int[] pids = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
@@ -42,16 +40,16 @@ public class Main2Activity extends AppCompatActivity {
         ArrayAdapter<String> adapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
         listView.setAdapter(adapter);
         this.listView.setOnItemClickListener((parent,view,position,id)-> {
-                Log.i("点击了哪一个",""+position+":"+Main2Activity.this.pids[position]+":"+Main2Activity.this.data[position]);
-                Intent intent = new Intent(Main2Activity.this,MainActivity.class);
-                intent.putExtra("pid",Main2Activity.this.pids[position]);
+                Log.i("点击了哪一个",""+position+":"+ProvincceActivity.this.pids[position]+":"+ProvincceActivity.this.data[position]);
+                Intent intent = new Intent(ProvincceActivity.this,CityActivity.class);
+                intent.putExtra("pid",ProvincceActivity.this.pids[position]);
                 startActivity(intent);
 
         });
 
         this.button=(Button)findViewById(R.id.Buttom);
         this.button.setOnClickListener((v)->{
-            startActivity(new Intent(Main2Activity.this,MainActivity.class));
+            startActivity(new Intent(ProvincceActivity.this,CityActivity.class));
         });
 
         String weatherUrl = "http://guolin.tech/api/china";
