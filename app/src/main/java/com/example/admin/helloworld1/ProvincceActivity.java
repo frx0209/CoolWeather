@@ -37,7 +37,7 @@ public class ProvincceActivity extends AppCompatActivity {
         this.textView = (TextView) findViewById(R.id.acd);
         this.listView = (ListView) findViewById(R.id.list_view);
 
-        ArrayAdapter<String> adapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
+        final ArrayAdapter<String> adapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
         listView.setAdapter(adapter);
         this.listView.setOnItemClickListener((parent,view,position,id)-> {
                 Log.i("点击了哪一个",""+position+":"+ProvincceActivity.this.pids[position]+":"+ProvincceActivity.this.data[position]);
@@ -72,6 +72,7 @@ public class ProvincceActivity extends AppCompatActivity {
                     public void run() {
 
                         textView.setText(responseText);
+                        adapter.notifyDataSetChanged();
                     }
                 });
 
