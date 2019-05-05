@@ -23,12 +23,17 @@ import okhttp3.Response;
 
 public class ProvincceActivity extends AppCompatActivity {
 
-    private List<String> data2=new ArrayList();
+    private int[] cids = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    private String currentlevel="provincce";
+    private int pid=0;
+
+    //private List<String> data2=new ArrayList();
     private int[] pids = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    private String[] data={"","",""," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ",""," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "};
+    private List<String> data=new ArrayList<>();
     private TextView textView;
     private ListView listView;
-    private Button button;
+
+    //private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,19 +45,32 @@ public class ProvincceActivity extends AppCompatActivity {
         final ArrayAdapter<String> adapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
         listView.setAdapter(adapter);
         this.listView.setOnItemClickListener((parent,view,position,id)-> {
-                Log.i("点击了哪一个",""+position+":"+ProvincceActivity.this.pids[position]+":"+ProvincceActivity.this.data[position]);
+            Log.i("点击了哪一个", "" + position + ":" + ProvincceActivity.this.pids[position] + ":" + ProvincceActivity.this.data.get(position));
+            pid = ProvincceActivity.this.pids[position];
+            currentlevel = "city";
+            getData(adapter);
+/*
                 Intent intent = new Intent(ProvincceActivity.this,CityActivity.class);
                 intent.putExtra("pid",ProvincceActivity.this.pids[position]);
+
+                if (currentlevel=="city"){
+                    intent.putExtra("cid",cids[position]);
+                }
                 startActivity(intent);
+*/
 
         });
 
-        this.button=(Button)findViewById(R.id.Buttom);
-        this.button.setOnClickListener((v)->{
-            startActivity(new Intent(ProvincceActivity.this,CityActivity.class));
-        });
+        //this.button=(Button)findViewById(R.id.Buttom);
+        //this.button.setOnClickListener((v)->{
+          //  startActivity(new Intent(ProvincceActivity.this,CityActivity.class));
+        //});
 
-        String weatherUrl = "http://guolin.tech/api/china";
+        getData(adapter);
+    }
+
+    private void getData(ArrayAdapter<String> adapter) {
+        String weatherUrl =currentlevel=="city"? "http://guolin.tech/api/china"+pid:"http://guolin.tech/api/china/";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
 
             @Override
@@ -71,7 +89,7 @@ public class ProvincceActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        textView.setText(responseText);
+                       // textView.setText(responseText);
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -84,13 +102,18 @@ public class ProvincceActivity extends AppCompatActivity {
 
     private void parseJSONObject(String responseText) {
         JSONArray jsonArray=null;
+        this.data.clear();
         try{
             jsonArray = new JSONArray(responseText);
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject =null;
                 jsonObject=jsonArray.getJSONObject(i);
-                this.data[i]= jsonObject.getString("name");
-                this.pids[i]=jsonObject.getInt("id");
+                this.data.add(jsonObject.getString("name"));
+                if(currentlevel=="city"){
+                    this.cids[i]=jsonObject.getInt("id");
+                }else {
+                    this.pids[i] = jsonObject.getInt("id");
+                }
             }
         }catch (JSONException e){
             e.printStackTrace();
