@@ -49,6 +49,7 @@ public class ProvincceActivity extends AppCompatActivity {
             pid = ProvincceActivity.this.pids[position];
             currentlevel = "city";
             getData(adapter);
+            
 /*
                 Intent intent = new Intent(ProvincceActivity.this,CityActivity.class);
                 intent.putExtra("pid",ProvincceActivity.this.pids[position]);
