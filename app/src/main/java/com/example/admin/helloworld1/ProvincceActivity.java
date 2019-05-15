@@ -23,10 +23,16 @@ import okhttp3.Response;
 
 public class ProvincceActivity extends AppCompatActivity {
 
-    private String currentlevel="provincce";
-    private int pid=0;
-    private List<Integer> pids = new ArrayList();
-    private List<String> data=new ArrayList<>();
+    public static final String PROVINCE = "province";
+    public static final String CITY = "city";
+    public static final String COUNTY = "county";
+    private  String currentlevel =PROVINCE;
+    private List<Integer>pids = new ArrayList<>();
+    private List<String>  data=new ArrayList<>();
+    private List<String> weather_ids=new ArrayList<>();
+    private  int weatherId=0;
+    private  int provinceId=0;
+    private  int cityId=0;
     private ListView listView;
 
     //private Button button;
@@ -39,9 +45,22 @@ public class ProvincceActivity extends AppCompatActivity {
         final ArrayAdapter<String> adapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
         listView.setAdapter(adapter);
         this.listView.setOnItemClickListener((parent,view,position,id)-> {
-            Log.i("点击了哪一个", "" + position + ":" + ProvincceActivity.this.pids.get(position) + ":" + ProvincceActivity.this.data.get(position));
-            pid=ProvincceActivity.this.pids.get(position);
-            currentlevel = "city";
+            Log.v("点击了哪一个",""+position+":"+ProvincceActivity.this.pids.get(position)+":"+ProvincceActivity.this.data.get(position));
+            // Intent intent = new Intent(ProvinceActivity.this,CityActivity.class);
+            //intent.putExtra("pid",ProvinceActivity.this.pids[position]);
+            provinceId=ProvincceActivity.this.pids.get(position);
+            if(currentlevel== PROVINCE) {
+                currentlevel = CITY;
+                provinceId=ProvincceActivity.this.pids.get(position);
+            }else  if(currentlevel ==CITY){
+                currentlevel = COUNTY;
+                cityId=ProvincceActivity.this.pids.get(position);
+            }else if( currentlevel == COUNTY){
+                weatherId=ProvincceActivity.this.pids.get(position);
+                Intent intent = new Intent(ProvincceActivity.this,WeatherActivity.class);
+                intent.putExtra("wid",weather_ids.get(position));
+                startActivity(intent);
+            }
             getData(adapter);
 
         });
@@ -49,8 +68,7 @@ public class ProvincceActivity extends AppCompatActivity {
     }
 
     private void getData(ArrayAdapter<String> adapter) {
-        String weatherUrl =currentlevel=="city"? "http://guolin.tech/api/china/"+pid:"http://guolin.tech/api/china";
-        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
+        String weatherUrl=currentlevel== PROVINCE ? "http://guolin.tech/api/china/":(currentlevel==CITY?"http://guolin.tech/api/china/"+provinceId :"http://guolin.tech/api/china/"+provinceId+"/"+cityId);        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
 
             @Override
             public void onFailure(Call call, IOException e) {
@@ -70,17 +88,20 @@ public class ProvincceActivity extends AppCompatActivity {
     }
 
     private void parseJSONObject(String responseText) {
-        JSONArray jsonArray=null;
+        JSONArray jsonArray = null;
         this.data.clear();
         this.pids.clear();
-        try{
+        this.weather_ids.clear();
+        try {
             jsonArray = new JSONArray(responseText);
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject jsonObject =null;
-                jsonObject=jsonArray.getJSONObject(i);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = null;
+                jsonObject = jsonArray.getJSONObject(i);
                 this.data.add(jsonObject.getString("name"));
                 this.pids.add(jsonObject.getInt("id"));
-
+                if(jsonObject.has("weather_id")){
+                    this.weather_ids.add(jsonObject.getString("weather_id"));
+                }
             }
         }catch (JSONException e){
             e.printStackTrace();
